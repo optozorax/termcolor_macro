@@ -4,7 +4,7 @@ macro_rules! clr {
 		|| -> std::io::Result<()> {
 			clr!(? $stdout $($tail)*);
 			Ok(())
-		}()
+		}().unwrap()
 	};
 
 	// Choosing what to do
@@ -36,15 +36,23 @@ macro_rules! clr {
 	};
 
 	// Build color specification
-	(@build $stdout:ident ($spec:expr) * $($tail:tt)*) => {
+	(@build $stdout:ident ($spec:expr) b $($tail:tt)*) => {
 		clr!(@build $stdout ($spec.set_bold(true)) $($tail)*)
 	};
 
-	(@build $stdout:ident ($spec:expr) ^ $($tail:tt)*) => {
+	(@build $stdout:ident ($spec:expr) d $($tail:tt)*) => {
+		clr!(@build $stdout ($spec.set_dimmed(true)) $($tail)*)
+	};
+
+	(@build $stdout:ident ($spec:expr) i $($tail:tt)*) => {
+		clr!(@build $stdout ($spec.set_italic(true)) $($tail)*)
+	};
+
+	(@build $stdout:ident ($spec:expr) n $($tail:tt)*) => {
 		clr!(@build $stdout ($spec.set_intense(true)) $($tail)*)
 	};
 
-	(@build $stdout:ident ($spec:expr) _ $($tail:tt)*) => {
+	(@build $stdout:ident ($spec:expr) u $($tail:tt)*) => {
 		clr!(@build $stdout ($spec.set_underline(true)) $($tail)*)
 	};
 
@@ -66,9 +74,9 @@ macro_rules! clr {
 macro_rules! clrln {
 	($stdout:ident: $($tail:tt)*) => {
 		|| -> std::io::Result<()> { 
-			clr!($stdout: $($tail)*)?;
+			clr!($stdout: $($tail)*);
 			writeln!(&mut $stdout)?;
 			Ok(())
-		}()
+		}().unwrap()
 	};
 }
